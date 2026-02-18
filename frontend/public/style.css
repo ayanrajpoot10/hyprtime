@@ -1,0 +1,122 @@
+/* ===== Design Tokens ===== */
+:root {
+    /* Colors - Dark Theme */
+    --bg: #0c0d12;
+    --surface: #14151c;
+    --surface-elevated: #1a1b25;
+    --surface-hover: #22232f;
+
+    --border: #2a2b3a;
+    --border-hover: #3a3b4f;
+
+    --text-primary: #f0f0f5;
+    --text-secondary: #9a9bb0;
+    --text-tertiary: #5f6075;
+
+    --accent: #6366f1;
+    --accent-hover: #5558e6;
+    --accent-subtle: rgba(99, 102, 241, 0.1);
+    --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+    /* Typography */
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Roboto",
+        "Oxygen",
+        "Ubuntu",
+        "Cantarell",
+        "Fira Sans",
+        "Droid Sans",
+        "Helvetica Neue",
+        sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+
+    /* Rendering */
+    color-scheme: dark;
+    color: var(--text-primary);
+    background-color: var(--bg);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+
+    /* Selection */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    src: local(""), url("./Inter-Medium.ttf") format("truetype");
+}
+
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--bg);
+    overflow-x: hidden;
+}
+
+#app {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+
+/* ===== Smooth Transitions ===== */
+a {
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+/* ===== Focus Styles ===== */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
