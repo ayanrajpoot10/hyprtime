@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	_ "embed"
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
@@ -18,7 +17,6 @@ func main() {
 
 	app := application.New(application.Options{
 		Name:        "hyprtime",
-		Description: "Hyprland Screen Time Viewer",
 		Services: []application.Service{
 			application.NewService(screenTimeService),
 		},
@@ -28,7 +26,7 @@ func main() {
 	})
 
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title:            "Hypr Screen Time",
+		Title:            "hyprtime",
 		BackgroundColour: application.NewRGB(255, 255, 255),
 		URL:              "/",
 		Width:            1200,
