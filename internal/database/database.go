@@ -12,7 +12,7 @@ import (
 // InitDB initializes the SQLite database connection
 func InitDB() (*sql.DB, error) {
 	user := utils.GetUser()
-	dbFile := fmt.Sprintf("/home/%s/.local/share/hyprscreentime/screentime.db", user)
+	dbFile := fmt.Sprintf("/home/%s/.local/share/hyprtime/hyprtime.db", user)
 
 	db, err := sql.Open("sqlite3", dbFile)
 	if err != nil {

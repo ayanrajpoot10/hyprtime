@@ -13,10 +13,10 @@ import (
 // InitDB initializes the SQLite database
 func InitDB() (*sql.DB, error) {
 	user := utils.GetUser()
-	dbFile := fmt.Sprintf("/home/%s/.local/share/hyprscreentime/screentime.db", user)
+	dbFile := fmt.Sprintf("/home/%s/.local/share/hyprtime/hyprtime.db", user)
 
 	// Create directory if it doesn't exist
-	if err := utils.EnsureDir(fmt.Sprintf("/home/%s/.local/share/hyprscreentime", user)); err != nil {
+	if err := utils.EnsureDir(fmt.Sprintf("/home/%s/.local/share/hyprtime", user)); err != nil {
 		return nil, fmt.Errorf("failed to create database directory: %w", err)
 	}
 
