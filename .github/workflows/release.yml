@@ -43,13 +43,13 @@ jobs:
         run: wails3 task build:daemon
 
       - name: Create archive
-        run: tar -czf hyprtimed-linux-${{ matrix.arch }}.tar.gz -C bin hyprtimed
+        run: tar -cJf hyprtimed-linux-${{ matrix.arch }}.tar.xz -C bin hyprtimed
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: hyprtimed-linux-${{ matrix.arch }}
-          path: hyprtimed-linux-${{ matrix.arch }}.tar.gz
+          path: hyprtimed-linux-${{ matrix.arch }}.tar.xz
 
   build-hyprtime:
     name: Build hyprtime (${{ matrix.arch }})
@@ -92,13 +92,13 @@ jobs:
         run: wails3 task build
 
       - name: Create archive
-        run: tar -czf hyprtime-linux-${{ matrix.arch }}.tar.gz -C bin hyprtime
+        run: tar -cJf hyprtime-linux-${{ matrix.arch }}.tar.xz -C bin hyprtime
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: hyprtime-linux-${{ matrix.arch }}
-          path: hyprtime-linux-${{ matrix.arch }}.tar.gz
+          path: hyprtime-linux-${{ matrix.arch }}.tar.xz
 
   release:
     name: GitHub Release
@@ -118,5 +118,5 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*.tar.gz
+          files: dist/*.tar.xz
           generate_release_notes: true
