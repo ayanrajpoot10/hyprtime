@@ -16,7 +16,7 @@ func main() {
 	defer screenTimeService.Close()
 
 	app := application.New(application.Options{
-		Name:        "hyprtime",
+		Name: "hyprtime",
 		Services: []application.Service{
 			application.NewService(screenTimeService),
 		},
@@ -32,9 +32,7 @@ func main() {
 		Hidden:           true,
 	})
 
-	err := app.Run()
-
-	if err != nil {
+	if err := app.Run(); err != nil {
 		log.Fatal(err)
 	}
 }
