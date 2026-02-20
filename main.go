@@ -29,8 +29,6 @@ func main() {
 		Title:            "hyprtime",
 		BackgroundColour: application.NewRGB(255, 255, 255),
 		URL:              "/",
-		Width:            1200,
-		Height:           800,
 		Hidden:           true,
 	})
 
