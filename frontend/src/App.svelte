@@ -5,21 +5,19 @@
   import Header from "./components/Header.svelte";
   import LoadingSpinner from "./components/LoadingSpinner.svelte";
   import ErrorMessage from "./components/ErrorMessage.svelte";
-  import OverviewView from "./views/OverviewView.svelte";
   import DailyView from "./views/DailyView.svelte";
 
   import {
-    overview,
     dailyData,
     loading,
     error,
-    viewMode,
-    loadOverview,
+    selectedDate,
+    loadDailyStats,
     refresh,
   } from "./lib/stores/screentime";
 
-  // Initial data load
-  loadOverview();
+  // Initial load with today's date
+  loadDailyStats(new Date().toISOString().split("T")[0]);
 
   // Auto-refresh every 30 seconds
   const interval = setInterval(refresh, 30000);
@@ -40,9 +38,7 @@
       <LoadingSpinner />
     {:else if $error}
       <ErrorMessage message={$error} onRetry={refresh} />
-    {:else if $viewMode === "overview" && $overview}
-      <OverviewView overview={$overview} />
-    {:else if $viewMode === "daily" && $dailyData}
+    {:else if $dailyData}
       <DailyView dailyData={$dailyData} />
     {/if}
   </main>

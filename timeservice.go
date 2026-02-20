@@ -46,61 +46,6 @@ func formatDuration(seconds int64) string {
 	return fmt.Sprintf("%ds", secs)
 }
 
-// GetOverview returns the overall screen time overview
-func (s *ScreenTimeService) GetOverview() (*models.ScreenTimeOverview, error) {
-	if s.db == nil {
-		return nil, fmt.Errorf("database not initialized")
-	}
-
-	// Get total screen time
-	totalTime, err := database.GetTotalScreenTime(s.db)
-	if err != nil {
-		return nil, err
-	}
-
-	// Get today's screen time
-	today := time.Now().Format("2006-01-02")
-	todayTime, err := database.GetTotalScreenTimeForDate(s.db, today)
-	if err != nil {
-		return nil, err
-	}
-
-	// Get top apps
-	apps, err := database.GetAllApps(s.db)
-	if err != nil {
-		return nil, err
-	}
-
-	topApps := make([]models.AppData, 0)
-	for i, app := range apps {
-		if i >= 10 { // Limit to top 10
-			break
-		}
-
-		percentage := 0.0
-		if totalTime > 0 {
-			percentage = float64(app.TotalTime) / float64(totalTime) * 100
-		}
-
-		topApps = append(topApps, models.AppData{
-			Class:              app.Class,
-			TotalTime:          app.TotalTime,
-			TotalTimeFormatted: formatDuration(app.TotalTime),
-			OpenCount:          app.OpenCount,
-			LastSeen:           app.LastSeen,
-			Percentage:         percentage,
-		})
-	}
-
-	return &models.ScreenTimeOverview{
-		TotalTime:          totalTime,
-		TotalTimeFormatted: formatDuration(totalTime),
-		TodayTime:          todayTime,
-		TodayTimeFormatted: formatDuration(todayTime),
-		TopApps:            topApps,
-	}, nil
-}
-
 // GetDailyStats returns statistics for a specific date
 func (s *ScreenTimeService) GetDailyStats(date string) (*models.DailyData, error) {
 	if s.db == nil {

@@ -17,12 +17,3 @@ type DailyData struct {
 	TotalTimeFormatted string    `json:"total_time_formatted"`
 	Apps               []AppData `json:"apps"`
 }
-
-// ScreenTimeOverview represents the overall screen time data
-type ScreenTimeOverview struct {
-	TotalTime          int64     `json:"total_time"`
-	TotalTimeFormatted string    `json:"total_time_formatted"`
-	TodayTime          int64     `json:"today_time"`
-	TodayTimeFormatted string    `json:"today_time_formatted"`
-	TopApps            []AppData `json:"top_apps"`
-}

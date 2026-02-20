@@ -147,16 +147,6 @@ func IncrementOpenCount(db *sql.DB, appID int64) error {
 	return tx.Commit()
 }
 
-// AppStats represents statistics for an application
-type AppStats struct {
-	ID        int64  `json:"id"`
-	Class     string `json:"class"`
-	TotalTime int64  `json:"total_time"`
-	OpenCount int64  `json:"open_count"`
-	LastSeen  string `json:"last_seen"`
-	CreatedAt string `json:"created_at"`
-}
-
 // DailyStats represents daily statistics for an application
 type DailyStats struct {
 	ID        int64  `json:"id"`
@@ -165,32 +155,6 @@ type DailyStats struct {
 	Date      string `json:"date"`
 	TotalTime int64  `json:"total_time"`
 	OpenCount int64  `json:"open_count"`
-}
-
-// GetAllApps retrieves all app statistics
-func GetAllApps(db *sql.DB) ([]AppStats, error) {
-	rows, err := db.Query(`
-		SELECT id, class, total_time, open_count, 
-		       COALESCE(last_seen, ''), COALESCE(created_at, '')
-		FROM apps
-		ORDER BY total_time DESC
-	`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var apps []AppStats
-	for rows.Next() {
-		var app AppStats
-		err := rows.Scan(&app.ID, &app.Class, &app.TotalTime, &app.OpenCount, &app.LastSeen, &app.CreatedAt)
-		if err != nil {
-			return nil, err
-		}
-		apps = append(apps, app)
-	}
-
-	return apps, rows.Err()
 }
 
 // GetDailyStats retrieves daily statistics for a specific date
@@ -218,13 +182,6 @@ func GetDailyStats(db *sql.DB, date string) ([]DailyStats, error) {
 	}
 
 	return stats, rows.Err()
-}
-
-// GetTotalScreenTime returns the total screen time across all apps
-func GetTotalScreenTime(db *sql.DB) (int64, error) {
-	var total int64
-	err := db.QueryRow("SELECT COALESCE(SUM(total_time), 0) FROM apps").Scan(&total)
-	return total, err
 }
 
 // GetTotalScreenTimeForDate returns the total screen time for a specific date
