@@ -7,9 +7,9 @@ import (
 	"syscall"
 	"time"
 
-	"hyprtimed/internal/database"
-	"hyprtimed/internal/logger"
-	"hyprtimed/internal/tracker"
+	"hyprtime/internal/database"
+	"hyprtime/internal/logger"
+	"hyprtime/internal/tracker"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"hyprtimed/internal/logger"
+	"hyprtime/internal/logger"
 )
 
 // HyprlandIPC handles communication with Hyprland via Unix socket
@@ -55,13 +55,11 @@ func (h *HyprlandIPC) GetActiveWindow() (*ActiveWindow, error) {
 	}
 	defer conn.Close()
 
-	// Send command to get active window
 	_, err = conn.Write([]byte("j/activewindow"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to send command: %w", err)
 	}
 
-	// Read response
 	buf := make([]byte, 8192)
 	n, err := conn.Read(buf)
 	if err != nil {

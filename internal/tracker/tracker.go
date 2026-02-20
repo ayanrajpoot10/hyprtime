@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"hyprtimed/internal/database"
-	"hyprtimed/internal/ipc"
-	"hyprtimed/internal/logger"
+	"hyprtime/internal/database"
+	"hyprtime/internal/ipc"
+	"hyprtime/internal/logger"
 )
 
 // Tracker manages screen time tracking
@@ -84,10 +84,8 @@ func (t *Tracker) Stop() {
 		now := time.Now()
 		var duration int64
 		if t.lastUpdate.IsZero() {
-			// No updates yet - use time since session started
 			duration = int64(now.Sub(t.currentSession.startTime).Seconds())
 		} else {
-			// Use time since last update
 			duration = int64(now.Sub(t.lastUpdate).Seconds())
 		}
 
@@ -124,16 +122,12 @@ func (t *Tracker) processEvents() {
 
 			switch eventType {
 			case "activewindow":
-				// Window focus changed - switch tracking without counting as new open
 				go t.handleFocusChange()
 			case "activewindowv2":
-				// Window focus changed by address
 				go t.handleFocusChange()
 			case "openwindow":
-				// New window actually opened - parse and increment open count
 				go t.handleWindowOpen(data)
 			case "closewindow":
-				// Window closed - end session if it's the current one
 				go t.handleWindowClose(data)
 			}
 		}
@@ -154,14 +148,11 @@ func (t *Tracker) periodicUpdate() {
 		case <-ticker.C:
 			t.mu.Lock()
 			if t.currentSession != nil {
-				// Calculate duration since last update
 				now := time.Now()
 				var duration int64
 				if t.lastUpdate.IsZero() {
-					// First update - use time since session started
 					duration = int64(now.Sub(t.currentSession.startTime).Seconds())
 				} else {
-					// Subsequent updates - use time since last update
 					duration = int64(now.Sub(t.lastUpdate).Seconds())
 				}
 
@@ -187,7 +178,6 @@ func (t *Tracker) handleFocusChange() {
 		return
 	}
 
-	// Ignore empty windows
 	if window.Class == "" || window.Address == "" {
 		return
 	}
@@ -195,21 +185,16 @@ func (t *Tracker) handleFocusChange() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	// Check if same window is still focused
 	if t.currentSession != nil && t.currentSession.windowAddress == window.Address {
-		// Same window, continue tracking
 		return
 	}
 
-	// Window changed - update time for previous window
 	if t.currentSession != nil {
 		now := time.Now()
 		var duration int64
 		if t.lastUpdate.IsZero() {
-			// No periodic update yet - use time since session started
 			duration = int64(now.Sub(t.currentSession.startTime).Seconds())
 		} else {
-			// Use time since last update (whether periodic or on change)
 			duration = int64(now.Sub(t.lastUpdate).Seconds())
 		}
 
@@ -220,7 +205,6 @@ func (t *Tracker) handleFocusChange() {
 		}
 	}
 
-	// Start tracking new focused window
 	appID, err := database.GetOrCreateApp(t.db, window.Class)
 	if err != nil {
 		logger.Error("Error getting/creating app: %v", err)
@@ -252,7 +236,6 @@ func (t *Tracker) handleWindowOpen(data string) {
 		return
 	}
 
-	// Increment open count for this app
 	appID, err := database.GetOrCreateApp(t.db, class)
 	if err != nil {
 		logger.Error("Error getting/creating app: %v", err)
@@ -269,21 +252,17 @@ func (t *Tracker) handleWindowOpen(data string) {
 
 // handleWindowClose handles window close events
 func (t *Tracker) handleWindowClose(data string) {
-	// data is the window address
 	address := strings.TrimSpace(data)
 
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	// If the closed window is the one we're tracking, update its time
 	if t.currentSession != nil && t.currentSession.windowAddress == address {
 		now := time.Now()
 		var duration int64
 		if t.lastUpdate.IsZero() {
-			// No updates yet - use time since session started
 			duration = int64(now.Sub(t.currentSession.startTime).Seconds())
 		} else {
-			// Use time since last update
 			duration = int64(now.Sub(t.lastUpdate).Seconds())
 		}
 
@@ -293,6 +272,6 @@ func (t *Tracker) handleWindowClose(data string) {
 			logger.Verbose("Window closed: %s (%.1fs)", t.currentSession.class, float64(duration))
 		}
 		t.currentSession = nil
-		t.lastUpdate = time.Time{} // Reset last update time
+		t.lastUpdate = time.Time{}
 	}
 }
