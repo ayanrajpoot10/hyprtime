@@ -11,13 +11,13 @@ vars:
 
 tasks:
   build:
-    summary: Builds the application and daemon for Linux
+    summary: Builds the application and daemon
     cmds:
       - task: linux:build
       - task: build:daemon
 
   build:daemon:
-    summary: Builds the hyprtimed daemon to bin/hyprtimed
+    summary: Builds the hyprtimed daemon
     cmds:
       - go build -trimpath -buildvcs=false -ldflags="-w -s" -o {{.BIN_DIR}}/hyprtimed ./cmd/hyprtimed/
     env:
