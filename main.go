@@ -28,7 +28,6 @@ func main() {
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "hyprtime",
 		BackgroundColour: application.NewRGB(255, 255, 255),
-		URL:              "/",
 		Hidden:           true,
 	})
 
