@@ -1,18 +1,10 @@
-<script context="module">
-    import { fade } from "svelte/transition";
-</script>
-
 <script lang="ts">
-    import StatCard from "../components/StatCard.svelte";
     import AppList from "../components/AppList.svelte";
     import DatePicker from "../components/DatePicker.svelte";
     import type { DailyData } from "../lib/types";
     import { selectedDate, loadDailyStats } from "../lib/stores/screentime";
 
     export let dailyData: DailyData;
-
-    let currentDate: string;
-    selectedDate.subscribe((d) => (currentDate = d));
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -22,49 +14,52 @@
     };
 </script>
 
-<div class="daily-view" in:fade={{ duration: 200 }}>
-    <div class="daily-header">
+<div class="view">
+    <div class="top">
         <DatePicker
-            value={currentDate}
+            value={$selectedDate}
             max={today}
             onChange={handleDateChange}
         />
+        <div class="summary">
+            <span class="total">{dailyData.total_time_formatted}</span>
+            <span class="meta">{dailyData.apps?.length ?? 0} apps</span>
+        </div>
     </div>
 
-    <div class="stats-row">
-        <StatCard
-            title="Screen Time"
-            value={dailyData.total_time_formatted}
-            icon="calendar"
-            variant="accent"
-        />
-        <StatCard
-            title="Apps Used"
-            value={dailyData.apps ? String(dailyData.apps.length) : "0"}
-            icon="apps"
-            variant="primary"
-        />
-    </div>
-
-    <AppList apps={dailyData.apps || []} title="Applications" />
+    <AppList apps={dailyData.apps ?? []} />
 </div>
 
 <style>
-    .daily-view {
+    .view {
         display: flex;
         flex-direction: column;
         gap: 24px;
     }
 
-    .daily-header {
+    .top {
         display: flex;
         align-items: center;
-        justify-content: flex-start;
+        justify-content: space-between;
+        gap: 16px;
     }
 
-    .stats-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 12px;
+    .summary {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+    }
+
+    .total {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+    }
+
+    .meta {
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
     }
 </style>

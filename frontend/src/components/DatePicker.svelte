@@ -3,168 +3,99 @@
     export let max: string;
     export let onChange: (date: string) => void;
 
-    const handleChange = (e: Event) => {
-        const input = e.target as HTMLInputElement;
-        onChange(input.value);
-    };
-
-    const goToPrevDay = () => {
-        const d = new Date(value);
-        d.setDate(d.getDate() - 1);
-        const newDate = d.toISOString().split("T")[0];
-        onChange(newDate);
-    };
-
-    const goToNextDay = () => {
-        const d = new Date(value);
-        d.setDate(d.getDate() + 1);
-        const newDate = d.toISOString().split("T")[0];
-        if (newDate <= max) {
-            onChange(newDate);
-        }
-    };
-
     $: isToday = value === max;
-
     $: displayDate = new Date(value + "T00:00:00").toLocaleDateString("en-US", {
         weekday: "short",
         month: "short",
         day: "numeric",
         year: "numeric",
     });
+
+    const prev = () => {
+        const d = new Date(value);
+        d.setDate(d.getDate() - 1);
+        onChange(d.toISOString().split("T")[0]);
+    };
+
+    const next = () => {
+        const d = new Date(value);
+        d.setDate(d.getDate() + 1);
+        const nd = d.toISOString().split("T")[0];
+        if (nd <= max) onChange(nd);
+    };
+
+    const handleChange = (e: Event) => {
+        onChange((e.target as HTMLInputElement).value);
+    };
 </script>
 
-<div class="date-picker">
-    <button class="nav-arrow" on:click={goToPrevDay} title="Previous day">
-        <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-            <polyline points="15 18 9 12 15 6" />
-        </svg>
-    </button>
-
-    <label class="date-label">
-        <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-        </svg>
-        <span class="date-display">{displayDate}</span>
-        <input
-            type="date"
-            {value}
-            {max}
-            on:change={handleChange}
-            class="date-input"
-        />
+<div class="picker">
+    <button class="arrow" on:click={prev}>‹</button>
+    <label class="date">
+        <span>{displayDate}</span>
+        <input type="date" {value} {max} on:change={handleChange} />
     </label>
-
-    <button
-        class="nav-arrow"
-        class:disabled={isToday}
-        on:click={goToNextDay}
-        disabled={isToday}
-        title="Next day"
-    >
-        <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-        >
-            <polyline points="9 18 15 12 9 6" />
-        </svg>
-    </button>
+    <button class="arrow" on:click={next} disabled={isToday}>›</button>
 </div>
 
 <style>
-    .date-picker {
+    .picker {
         display: flex;
         align-items: center;
-        gap: 8px;
-        background: var(--surface-elevated);
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        padding: 6px;
+        gap: 4px;
     }
 
-    .nav-arrow {
+    .arrow {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 1.25rem;
+        line-height: 1;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 34px;
-        height: 34px;
-        padding: 0;
-        margin: 0;
-        border: none;
-        background: var(--surface);
-        color: var(--text-secondary);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
+        transition:
+            background 0.15s,
+            color 0.15s;
     }
 
-    .nav-arrow:hover:not(.disabled) {
-        background: var(--accent-subtle);
-        color: var(--accent);
+    .arrow:hover:not(:disabled) {
+        background: var(--surface-elevated);
+        color: var(--text-primary);
     }
 
-    .nav-arrow.disabled {
+    .arrow:disabled {
         opacity: 0.3;
         cursor: not-allowed;
     }
 
-    .date-label {
+    .date {
+        position: relative;
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 12px;
+        font-size: 0.9rem;
+        font-weight: 500;
         color: var(--text-primary);
         cursor: pointer;
-        position: relative;
-        font-weight: 500;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: background 0.15s;
     }
 
-    .date-label svg {
-        color: var(--accent);
-        flex-shrink: 0;
+    .date:hover {
+        background: var(--surface-elevated);
     }
 
-    .date-display {
-        font-size: 0.9rem;
-        white-space: nowrap;
-    }
-
-    .date-input {
+    .date input {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         opacity: 0;
+        width: 100%;
         cursor: pointer;
         border: none;
-        padding: 0;
     }
 </style>
