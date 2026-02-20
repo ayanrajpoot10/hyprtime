@@ -14,7 +14,6 @@ type ScreenTimeService struct {
 	db *sql.DB
 }
 
-// NewScreenTimeService creates a new screen time service
 func NewScreenTimeService() *ScreenTimeService {
 	db, err := database.InitDB()
 	if err != nil {
@@ -24,14 +23,12 @@ func NewScreenTimeService() *ScreenTimeService {
 	return &ScreenTimeService{db: db}
 }
 
-// Close closes the database connection
 func (s *ScreenTimeService) Close() {
 	if s.db != nil {
 		s.db.Close()
 	}
 }
 
-// formatDuration formats seconds into a readable string
 func formatDuration(seconds int64) string {
 	duration := time.Duration(seconds) * time.Second
 	hours := int(duration.Hours())
@@ -46,7 +43,6 @@ func formatDuration(seconds int64) string {
 	return fmt.Sprintf("%ds", secs)
 }
 
-// GetDailyStats returns statistics for a specific date
 func (s *ScreenTimeService) GetDailyStats(date string) (*models.DailyData, error) {
 	if s.db == nil {
 		return nil, fmt.Errorf("database not initialized")
@@ -86,7 +82,6 @@ func (s *ScreenTimeService) GetDailyStats(date string) (*models.DailyData, error
 	}, nil
 }
 
-// GetTodayStats returns today's statistics
 func (s *ScreenTimeService) GetTodayStats() (*models.DailyData, error) {
 	today := time.Now().Format("2006-01-02")
 	return s.GetDailyStats(today)

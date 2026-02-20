@@ -11,7 +11,6 @@ import (
 var assets embed.FS
 
 func main() {
-
 	screenTimeService := NewScreenTimeService()
 	defer screenTimeService.Close()
 

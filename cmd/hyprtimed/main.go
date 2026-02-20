@@ -28,7 +28,7 @@ func main() {
 		logger.SetLogLevel(logger.LogLevelQuiet)
 	}
 
-	logger.Info("Starting Hyprland Screen Time Daemon")
+	logger.Info("Starting HyprTime Daemon")
 
 	db, err := database.InitDB()
 	if err != nil {
