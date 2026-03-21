@@ -2,26 +2,15 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 	"time"
 
-	"hyprtime/internal/daemon/api"
-	"hyprtime/internal/daemon/database"
 	"hyprtime/internal/daemon/tracker"
 	"hyprtime/internal/logger"
+	"hyprtime/internal/shared/database"
 )
-
-func getSocketPath() string {
-	runtimeDir := os.Getenv("XDG_RUNTIME_DIR")
-	if runtimeDir == "" {
-		runtimeDir = fmt.Sprintf("/run/user/%d", os.Getuid())
-	}
-	return filepath.Join(runtimeDir, "hyprtime", "daemon.sock")
-}
 
 func main() {
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
@@ -47,18 +36,6 @@ func main() {
 	}
 	defer db.Close()
 
-	socketPath := getSocketPath()
-	apiServer, err := api.NewServer(db, socketPath)
-	if err != nil {
-		logger.Fatal("Failed to create API server: %v", err)
-	}
-
-	go func() {
-		if err := apiServer.Start(); err != nil {
-			logger.Error("API server error: %v", err)
-		}
-	}()
-
 	tr := tracker.New(db)
 	if err := tr.Start(); err != nil {
 		logger.Fatal("Failed to start tracker: %v", err)
@@ -71,7 +48,6 @@ func main() {
 	logger.Info("Shutting down...")
 
 	tr.Stop()
-	apiServer.Close()
 
 	time.Sleep(500 * time.Millisecond)
 	logger.Info("Daemon stopped")

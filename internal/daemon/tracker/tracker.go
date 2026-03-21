@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"hyprtime/internal/daemon/database"
+	"hyprtime/internal/shared/database"
 	"hyprtime/internal/daemon/ipc"
 	"hyprtime/internal/logger"
 )
