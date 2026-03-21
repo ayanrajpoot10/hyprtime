@@ -39,7 +39,7 @@ func main() {
 		logger.SetLogLevel(logger.LogLevelQuiet)
 	}
 
-	logger.Info("Starting HyprTime Daemon")
+	logger.Info("Starting Hyprtime Daemon")
 
 	db, err := database.InitDB()
 	if err != nil {
@@ -47,34 +47,29 @@ func main() {
 	}
 	defer db.Close()
 
-	// Start API server
 	socketPath := getSocketPath()
 	apiServer, err := api.NewServer(db, socketPath)
 	if err != nil {
 		logger.Fatal("Failed to create API server: %v", err)
 	}
 
-	// Start API server in goroutine
 	go func() {
 		if err := apiServer.Start(); err != nil {
 			logger.Error("API server error: %v", err)
 		}
 	}()
 
-	// Start tracker
 	tr := tracker.New(db)
 	if err := tr.Start(); err != nil {
 		logger.Fatal("Failed to start tracker: %v", err)
 	}
 
-	// Wait for shutdown signal
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 	<-sigChan
 	logger.Info("Shutting down...")
 
-	// Graceful shutdown
 	tr.Stop()
 	apiServer.Close()
 

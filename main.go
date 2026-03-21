@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+
 	"hyprtime/internal/gui/service"
 )
 

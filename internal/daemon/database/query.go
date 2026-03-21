@@ -2,7 +2,6 @@ package database
 
 import "database/sql"
 
-// DailyStats holds per-app usage data for a single day.
 type DailyStats struct {
 	ID        int64  `json:"id"`
 	AppID     int64  `json:"app_id"`
@@ -12,7 +11,6 @@ type DailyStats struct {
 	OpenCount int64  `json:"open_count"`
 }
 
-// GetDailyStats returns all app stats for a given date, ordered by time descending.
 func GetDailyStats(db *sql.DB, date string) ([]DailyStats, error) {
 	rows, err := db.Query(`
 		SELECT ds.id, ds.app_id, a.class, ds.date, ds.total_time, ds.open_count
@@ -38,7 +36,6 @@ func GetDailyStats(db *sql.DB, date string) ([]DailyStats, error) {
 	return stats, rows.Err()
 }
 
-// GetTotalScreenTimeForDate returns the sum of all app time for a given date.
 func GetTotalScreenTimeForDate(db *sql.DB, date string) (int64, error) {
 	var total int64
 	err := db.QueryRow(`

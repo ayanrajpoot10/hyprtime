@@ -11,14 +11,12 @@ import (
 	"hyprtime/internal/shared/models"
 )
 
-// Client represents an HTTP client for communicating with the daemon API
 type Client struct {
 	httpClient *http.Client
 	baseURL    string
 	socketPath string
 }
 
-// NewClient creates a new API client that communicates over Unix socket
 func NewClient(socketPath string) *Client {
 	return &Client{
 		httpClient: &http.Client{
@@ -34,7 +32,6 @@ func NewClient(socketPath string) *Client {
 	}
 }
 
-// Health checks if the daemon API is responding
 func (c *Client) Health(ctx context.Context) error {
 	url := fmt.Sprintf("%s/api/v1/health", c.baseURL)
 
@@ -56,7 +53,6 @@ func (c *Client) Health(ctx context.Context) error {
 	return nil
 }
 
-// GetDailyStats fetches daily stats for a specific date (YYYY-MM-DD format)
 func (c *Client) GetDailyStats(ctx context.Context, date string) (*models.DailyData, error) {
 	url := fmt.Sprintf("%s/api/v1/stats/daily/%s", c.baseURL, date)
 
@@ -83,7 +79,6 @@ func (c *Client) GetDailyStats(ctx context.Context, date string) (*models.DailyD
 	return &data, nil
 }
 
-// GetTodayStats fetches stats for the current day
 func (c *Client) GetTodayStats(ctx context.Context) (*models.DailyData, error) {
 	url := fmt.Sprintf("%s/api/v1/stats/today", c.baseURL)
 

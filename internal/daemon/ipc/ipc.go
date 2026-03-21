@@ -11,13 +11,11 @@ import (
 	"hyprtime/internal/logger"
 )
 
-// HyprlandIPC handles communication with Hyprland via Unix socket
 type HyprlandIPC struct {
 	socketPath string
 	eventPath  string
 }
 
-// ActiveWindow represents the currently active window
 type ActiveWindow struct {
 	Address      string `json:"address"`
 	Class        string `json:"class"`
@@ -26,7 +24,6 @@ type ActiveWindow struct {
 	InitialTitle string `json:"initialTitle"`
 }
 
-// New creates a new Hyprland IPC client
 func New() (*HyprlandIPC, error) {
 	instance := os.Getenv("HYPRLAND_INSTANCE_SIGNATURE")
 	if instance == "" {
@@ -47,7 +44,6 @@ func New() (*HyprlandIPC, error) {
 	}, nil
 }
 
-// GetActiveWindow retrieves the currently active window
 func (h *HyprlandIPC) GetActiveWindow() (*ActiveWindow, error) {
 	conn, err := net.Dial("unix", h.socketPath)
 	if err != nil {
@@ -74,7 +70,6 @@ func (h *HyprlandIPC) GetActiveWindow() (*ActiveWindow, error) {
 	return &window, nil
 }
 
-// SubscribeToEvents subscribes to Hyprland events
 func (h *HyprlandIPC) SubscribeToEvents(eventChan chan<- string) error {
 	conn, err := net.Dial("unix", h.eventPath)
 	if err != nil {
@@ -100,7 +95,6 @@ func (h *HyprlandIPC) SubscribeToEvents(eventChan chan<- string) error {
 	return nil
 }
 
-// ParseEvent parses an event string from Hyprland
 func ParseEvent(event string) (string, string) {
 	parts := strings.SplitN(event, ">>", 2)
 	if len(parts) != 2 {

@@ -12,7 +12,6 @@ import (
 	"hyprtime/internal/shared/models"
 )
 
-// formatDuration converts seconds to a human-readable duration string
 func formatDuration(seconds int64) string {
 	duration := time.Duration(seconds) * time.Second
 	hours := int(duration.Hours())
@@ -27,7 +26,6 @@ func formatDuration(seconds int64) string {
 	return fmt.Sprintf("%ds", secs)
 }
 
-// handleHealth returns the health status of the API
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
@@ -36,15 +34,12 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// handleGetTodayStats returns stats for the current day
 func (s *Server) handleGetTodayStats(w http.ResponseWriter, r *http.Request) {
 	today := time.Now().Format("2006-01-02")
-	s.getDailyStats(w, r, today)
+	s.getDailyStats(w, today)
 }
 
-// handleGetDailyStatsRoute parses the date from URL and returns stats
 func (s *Server) handleGetDailyStatsRoute(w http.ResponseWriter, r *http.Request) {
-	// Extract date from URL path: /api/v1/stats/daily/2026-03-21
 	path := r.URL.Path
 	prefix := "/api/v1/stats/daily/"
 
@@ -59,14 +54,12 @@ func (s *Server) handleGetDailyStatsRoute(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	s.getDailyStats(w, r, date)
+	s.getDailyStats(w, date)
 }
 
-// getDailyStats is the core function to fetch and format daily stats
-func (s *Server) getDailyStats(w http.ResponseWriter, r *http.Request, date string) {
+func (s *Server) getDailyStats(w http.ResponseWriter, date string) {
 	logger.Debug("API: GetDailyStats for date: %s", date)
 
-	// Get daily stats from database
 	stats, err := database.GetDailyStats(s.db, date)
 	if err != nil {
 		logger.Error("Failed to get daily stats: %v", err)
@@ -74,7 +67,6 @@ func (s *Server) getDailyStats(w http.ResponseWriter, r *http.Request, date stri
 		return
 	}
 
-	// Get total time for percentage calculation
 	totalTime, err := database.GetTotalScreenTimeForDate(s.db, date)
 	if err != nil {
 		logger.Error("Failed to get total time: %v", err)
@@ -82,7 +74,6 @@ func (s *Server) getDailyStats(w http.ResponseWriter, r *http.Request, date stri
 		return
 	}
 
-	// Convert to API response format
 	apps := make([]models.AppData, 0, len(stats))
 	for _, stat := range stats {
 		percentage := 0.0
@@ -95,7 +86,7 @@ func (s *Server) getDailyStats(w http.ResponseWriter, r *http.Request, date stri
 			TotalTime:          stat.TotalTime,
 			TotalTimeFormatted: formatDuration(stat.TotalTime),
 			OpenCount:          stat.OpenCount,
-			LastSeen:           stat.Date, // Using date as last_seen for now
+			LastSeen:           stat.Date,
 			Percentage:         percentage,
 		})
 	}

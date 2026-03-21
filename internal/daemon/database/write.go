@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-// GetOrCreateApp returns the ID of an existing app or inserts a new one.
 func GetOrCreateApp(db *sql.DB, class string) (int64, error) {
 	var appID int64
 	err := db.QueryRow("SELECT id FROM apps WHERE class = ?", class).Scan(&appID)
@@ -27,7 +26,6 @@ func GetOrCreateApp(db *sql.DB, class string) (int64, error) {
 	return appID, err
 }
 
-// UpdateAppTime adds duration (seconds) to an app's total and today's daily record.
 func UpdateAppTime(db *sql.DB, appID int64, duration int64) error {
 	if duration <= 0 {
 		return nil
@@ -61,7 +59,6 @@ func UpdateAppTime(db *sql.DB, appID int64, duration int64) error {
 	return tx.Commit()
 }
 
-// IncrementOpenCount bumps the open count for an app in both the global and daily tables.
 func IncrementOpenCount(db *sql.DB, appID int64) error {
 	tx, err := db.Begin()
 	if err != nil {

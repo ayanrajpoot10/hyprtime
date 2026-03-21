@@ -12,7 +12,6 @@ import (
 	"hyprtime/internal/logger"
 )
 
-// Tracker manages screen time tracking
 type Tracker struct {
 	db             *sql.DB
 	ipc            *ipc.HyprlandIPC
@@ -24,7 +23,6 @@ type Tracker struct {
 	lastUpdate     time.Time
 }
 
-// Session represents the current window being tracked
 type Session struct {
 	appID         int64
 	class         string
@@ -33,7 +31,6 @@ type Session struct {
 	startTime     time.Time
 }
 
-// New creates a new screen time tracker
 func New(db *sql.DB) *Tracker {
 	return &Tracker{
 		db:        db,
@@ -42,7 +39,6 @@ func New(db *sql.DB) *Tracker {
 	}
 }
 
-// Start begins tracking screen time
 func (t *Tracker) Start() error {
 	logger.Info("Initializing Hyprland IPC...")
 
@@ -52,33 +48,27 @@ func (t *Tracker) Start() error {
 		return fmt.Errorf("failed to initialize Hyprland IPC: %w", err)
 	}
 
-	// Subscribe to events
 	logger.Verbose("Subscribing to Hyprland events...")
 	if err := t.ipc.SubscribeToEvents(t.eventChan); err != nil {
 		return fmt.Errorf("failed to subscribe to events: %w", err)
 	}
 
-	// Start event processor
 	t.wg.Add(1)
 	go t.processEvents()
 
-	// Start periodic update routine
 	t.wg.Add(1)
 	go t.periodicUpdate()
 
 	logger.Info("Tracking started successfully")
 
-	// Track current window immediately
 	go t.handleFocusChange()
 
 	return nil
 }
 
-// Stop gracefully stops the tracker
 func (t *Tracker) Stop() {
 	logger.Info("Stopping tracker...")
 
-	// Update time for current window if any
 	t.mu.Lock()
 	if t.currentSession != nil {
 		now := time.Now()
@@ -98,14 +88,12 @@ func (t *Tracker) Stop() {
 	}
 	t.mu.Unlock()
 
-	// Signal goroutines to stop
 	close(t.stopChan)
 	t.wg.Wait()
 
 	logger.Info("Tracker stopped")
 }
 
-// processEvents handles incoming Hyprland events
 func (t *Tracker) processEvents() {
 	defer t.wg.Done()
 
@@ -134,7 +122,6 @@ func (t *Tracker) processEvents() {
 	}
 }
 
-// periodicUpdate updates the database every 1 minute to prevent data loss
 func (t *Tracker) periodicUpdate() {
 	defer t.wg.Done()
 
@@ -170,7 +157,6 @@ func (t *Tracker) periodicUpdate() {
 	}
 }
 
-// handleFocusChange handles window focus changes (activewindow event)
 func (t *Tracker) handleFocusChange() {
 	window, err := t.ipc.GetActiveWindow()
 	if err != nil {
@@ -223,9 +209,7 @@ func (t *Tracker) handleFocusChange() {
 	logger.Info("Focused: %s (%s)", window.Class, window.Title)
 }
 
-// handleWindowOpen handles actual window open events
 func (t *Tracker) handleWindowOpen(data string) {
-	// Parse: address,workspace,class,title
 	parts := strings.SplitN(data, ",", 4)
 	if len(parts) < 3 {
 		return
@@ -250,7 +234,6 @@ func (t *Tracker) handleWindowOpen(data string) {
 	logger.Debug("Window opened: %s", class)
 }
 
-// handleWindowClose handles window close events
 func (t *Tracker) handleWindowClose(data string) {
 	address := strings.TrimSpace(data)
 

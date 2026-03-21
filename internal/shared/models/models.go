@@ -1,6 +1,5 @@
 package models
 
-// AppData represents application usage data for the frontend
 type AppData struct {
 	Class              string  `json:"class"`
 	TotalTime          int64   `json:"total_time"`
@@ -10,7 +9,6 @@ type AppData struct {
 	Percentage         float64 `json:"percentage"`
 }
 
-// DailyData represents daily usage data
 type DailyData struct {
 	Date               string    `json:"date"`
 	TotalTime          int64     `json:"total_time"`
