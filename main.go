@@ -5,13 +5,14 @@ import (
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"hyprtime/internal/gui/service"
 )
 
 //go:embed frontend/dist
 var assets embed.FS
 
 func main() {
-	screenTimeService := NewScreenTimeService()
+	screenTimeService := service.NewScreenTimeService()
 	defer screenTimeService.Close()
 
 	app := application.New(application.Options{

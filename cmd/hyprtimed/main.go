@@ -2,15 +2,26 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
-	"hyprtime/internal/database"
+	"hyprtime/internal/daemon/api"
+	"hyprtime/internal/daemon/database"
+	"hyprtime/internal/daemon/tracker"
 	"hyprtime/internal/logger"
-	"hyprtime/internal/tracker"
 )
+
+func getSocketPath() string {
+	runtimeDir := os.Getenv("XDG_RUNTIME_DIR")
+	if runtimeDir == "" {
+		runtimeDir = fmt.Sprintf("/run/user/%d", os.Getuid())
+	}
+	return filepath.Join(runtimeDir, "hyprtime", "daemon.sock")
+}
 
 func main() {
 	verbose := flag.Bool("verbose", false, "Enable verbose logging")
@@ -36,18 +47,37 @@ func main() {
 	}
 	defer db.Close()
 
-	tr := tracker.New(db)
+	// Start API server
+	socketPath := getSocketPath()
+	apiServer, err := api.NewServer(db, socketPath)
+	if err != nil {
+		logger.Fatal("Failed to create API server: %v", err)
+	}
 
+	// Start API server in goroutine
+	go func() {
+		if err := apiServer.Start(); err != nil {
+			logger.Error("API server error: %v", err)
+		}
+	}()
+
+	// Start tracker
+	tr := tracker.New(db)
 	if err := tr.Start(); err != nil {
 		logger.Fatal("Failed to start tracker: %v", err)
 	}
 
+	// Wait for shutdown signal
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 	<-sigChan
 	logger.Info("Shutting down...")
+
+	// Graceful shutdown
 	tr.Stop()
+	apiServer.Close()
+
 	time.Sleep(500 * time.Millisecond)
 	logger.Info("Daemon stopped")
 }
