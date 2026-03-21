@@ -20,24 +20,11 @@ tasks:
     summary: Builds the GUI application (Wails)
     cmds:
       - task: linux:build
-    sources:
-      - main.go
-      - internal/gui/**/*.go
-      - internal/shared/**/*.go
-      - internal/logger/**/*.go
-      - internal/utils/**/*.go
-      - frontend/dist/**/*
 
   build:daemon:
     summary: Builds the hyprtimed daemon
     cmds:
       - go build -trimpath -buildvcs=false -ldflags="-w -s" -o {{.BIN_DIR}}/hyprtimed ./cmd/hyprtimed/
-    sources:
-      - cmd/hyprtimed/**/*.go
-      - internal/daemon/**/*.go
-      - internal/shared/**/*.go
-      - internal/logger/**/*.go
-      - internal/utils/**/*.go
 
   package:
     summary: Packages a production build of the application for Linux

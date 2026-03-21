@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type { AppData } from "../lib/types";
-    import AppItem from "./AppItem.svelte";
+    import type { AppData } from "$lib/types";
+    import AppItem from "$components/AppItem.svelte";
 
     export let apps: AppData[] = [];
 </script>

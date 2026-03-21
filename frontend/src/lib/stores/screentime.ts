@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
-import type { DailyData } from "../types";
-import { fetchDailyStats } from "../services/screentime";
+import type { DailyData } from "$lib/types";
+import { fetchDailyStats } from "$lib/services/screentime";
 
 export const dailyData = writable<DailyData | null>(null);
 export const loading = writable<boolean>(true);

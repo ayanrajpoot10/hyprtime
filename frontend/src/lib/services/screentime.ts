@@ -1,5 +1,5 @@
-import * as ScreenTimeService from "../../../bindings/hyprtime/internal/gui/service/screentimeservice";
-import type { DailyData } from "../types";
+import * as ScreenTimeService from "$bindings/hyprtime/internal/gui/service/screentimeservice";
+import type { DailyData } from "$lib/types";
 
 export async function fetchDailyStats(date: string): Promise<DailyData> {
     const data = await ScreenTimeService.GetDailyStats(date);

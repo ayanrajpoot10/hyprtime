@@ -1,8 +1,8 @@
 <script lang="ts">
-    import AppList from "../components/AppList.svelte";
-    import DatePicker from "../components/DatePicker.svelte";
-    import type { DailyData } from "../lib/types";
-    import { selectedDate, loadDailyStats } from "../lib/stores/screentime";
+    import AppList from "$components/AppList.svelte";
+    import DatePicker from "$components/DatePicker.svelte";
+    import type { DailyData } from "$lib/types";
+    import { selectedDate, loadDailyStats } from "$lib/stores/screentime";
 
     export let dailyData: DailyData;
 

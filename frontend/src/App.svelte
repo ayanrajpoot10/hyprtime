@@ -1,12 +1,12 @@
 <script lang="ts">
   import { Window } from "@wailsio/runtime";
-  import DailyView from "./views/DailyView.svelte";
+  import DailyView from "$views/DailyView.svelte";
   import {
     dailyData,
     loading,
     error,
     loadDailyStats,
-  } from "./lib/stores/screentime";
+  } from "$lib/stores/screentime";
 
   loadDailyStats(new Date().toISOString().split("T")[0]);
   Window.Show();

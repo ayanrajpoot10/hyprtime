@@ -7,7 +7,27 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "$lib/*": [
+        "src/lib/*"
+      ],
+      "$components/*": [
+        "src/components/*"
+      ],
+      "$views/*": [
+        "src/views/*"
+      ],
+      "$bindings/*": [
+        "bindings/*"
+      ]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.svelte", "bindings"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.svelte",
+    "bindings"
+  ],
 }

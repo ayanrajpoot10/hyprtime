@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { AppData } from "../lib/types";
+    import type { AppData } from "$lib/types";
 
     export let app: AppData;
 
