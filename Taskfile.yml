@@ -1,0 +1,42 @@
+version: '3'
+
+includes:
+  common: ./build/Taskfile.yml
+  linux: ./build/linux/Taskfile.yml
+
+vars:
+  APP_NAME: "hyprtime"
+  BIN_DIR: "bin"
+  VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
+
+tasks:
+  build:
+    summary: Builds both GUI application and daemon
+    cmds:
+      - task: build:gui
+      - task: build:daemon
+
+  build:gui:
+    summary: Builds the GUI application (Wails)
+    cmds:
+      - task: linux:build
+
+  build:daemon:
+    summary: Builds the hyprtimed daemon
+    cmds:
+      - go build -trimpath -buildvcs=false -ldflags="-w -s" -o {{.BIN_DIR}}/hyprtimed ./cmd/hyprtimed/
+
+  package:
+    summary: Packages a production build of the application for Linux
+    cmds:
+      - task: linux:package
+
+  run:
+    summary: Runs the application
+    cmds:
+      - task: linux:run
+
+  dev:
+    summary: Runs the application in development mode
+    cmds:
+      - wails3 dev -config ./build/config.yml -port {{.VITE_PORT}}

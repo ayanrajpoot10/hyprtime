@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc libc6-dev pkg-config \
+            libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install wails3
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+
+      - name: Build hyprtime and hyprtimed
+        run: wails3 task build
+
+      - name: Create archive
+        run: tar -cJf hyprtime.tar.xz -C bin hyprtime hyprtimed
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: hyprtime.tar.xz
+          generate_release_notes: true
